@@ -22,32 +22,26 @@ st.divider()
 
 if selected_item == '脳神経外科領域に関する質問':
     input_message = st.text_input(label="脳神経外科領域に関する質問を入力してください。")
-    messages = [
-        SystemMessage(content="あなたは脳神経外科領域の専門家であり、質問に対して適切に答えることが求められます。"),
-        HumanMessage(content=input_message)
-    ]
-    neurosurgery_answer = llm(messages)
-
 else:
     input_message = st.text_input(label="生成AIに関する質問を入力してください。")
-    messages = [
-        SystemMessage(content="あなたは生成AIの専門家であり、質問に対して適切に答えることが求められます。"),
-        HumanMessage(content=input_message)
-    ]
-    generative_ai_answer = llm(messages)
-
 
 if st.button('送信'):
     st.divider()
-
-    if selected_item == '脳神経外科領域に関する質問':
-        if input_message:
-            st.write(neurosurgery_answer.content)
+    
+    if input_message:
+        if selected_item == '脳神経外科領域に関する質問':
+            messages = [
+                SystemMessage(content="あなたは脳神経外科領域の専門家であり、質問に対して適切に答えることが求められます。"),
+                HumanMessage(content=input_message)
+            ]
         else:
-            st.write('質問内容を入力してから「送信」ボタンを押してください。')
-
+            messages = [
+                SystemMessage(content="あなたは生成AIの専門家であり、質問に対して適切に答えることが求められます。"),
+                HumanMessage(content=input_message)
+            ]
+        
+        
+        answer = llm.invoke(messages)
+        st.write(answer.content)
     else:
-        if input_message:
-            st.write(generative_ai_answer.content)
-        else:
-            st.write('質問内容を入力してから「送信」ボタンを押してください。')
+        st.write('質問内容を入力してから「送信」ボタンを押してください。')
