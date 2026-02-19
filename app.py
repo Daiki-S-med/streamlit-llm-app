@@ -7,6 +7,29 @@ from langchain_core.messages import SystemMessage, HumanMessage
 llm = ChatOpenAI(model='gpt-4o-mini', temperature=0.5)
 import streamlit as st
 
+
+def get_llm_response(user_message, selected_theme):
+    """
+    LLMからの回答を取得する関数
+    Args:
+        user_message (str): ユーザーの入力メッセージ
+        selected_theme (str): ラジオボタンで選択されたテーマ
+    Returns:
+        str: LLMからの回答
+    """
+    if selected_theme == '脳神経外科領域に関する質問':
+        system_content = "あなたは脳神経外科領域の専門家であり、質問に対して適切に答えることが求められます。"
+    else:
+        system_content = "あなたは生成AIの専門家であり、質問に対して適切に答えることが求められます。"
+
+    messages = [
+        SystemMessage(content=system_content),
+        HumanMessage(content=user_message)
+    ]
+
+    answer = llm.invoke(messages)
+    return answer.content
+
 st.title('サンプルLLMアプリ')
 st.write('##### 動作1: 脳神経外科領域に関する質問')
 st.write('入力フォームに質問内容を入力し、「送信」ボタンを押すと、脳神経外科領域に関する質問ができます。')
@@ -29,19 +52,7 @@ if st.button('送信'):
     st.divider()
     
     if input_message:
-        if selected_item == '脳神経外科領域に関する質問':
-            messages = [
-                SystemMessage(content="あなたは脳神経外科領域の専門家であり、質問に対して適切に答えることが求められます。"),
-                HumanMessage(content=input_message)
-            ]
-        else:
-            messages = [
-                SystemMessage(content="あなたは生成AIの専門家であり、質問に対して適切に答えることが求められます。"),
-                HumanMessage(content=input_message)
-            ]
-        
-        
-        answer = llm.invoke(messages)
-        st.write(answer.content)
+        response = get_llm_response(input_message, selected_item)
+        st.write(response)
     else:
         st.write('質問内容を入力してから「送信」ボタンを押してください。')
